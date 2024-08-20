@@ -16,13 +16,13 @@ buttons.forEach(button => {
         // Handle number input or decimal point
         if (!isNaN(value) || value === '.') {
             if (resultDisplayed) {
-                // If result was displayed, reset currentInput for a new calculation
+                // If a result was just displayed, start fresh with new input
                 currentInput = value;
                 resultDisplayed = false;
             } else {
-                currentInput += value; // Append value to current input
+                currentInput += value; // Append number to current input
             }
-            inputDisplay.value = previousInput + ' ' + operator + ' ' + currentInput;
+            inputDisplay.value = currentInput; // Display only the current input
         } 
         // Handle operator input
         else if (['+', '-', '*', '/'].includes(value)) {
@@ -31,13 +31,18 @@ buttons.forEach(button => {
                     // Move currentInput to previousInput if no previous input
                     previousInput = currentInput;
                 } else if (!resultDisplayed) {
-                    // Perform calculation before applying new operator
+                    // If continuing calculation, perform calculation
                     previousInput = calculate(previousInput, operator, currentInput).toString();
                     resultDisplay.value = previousInput;
                 }
-                operator = value; // Set operator
-                currentInput = ''; // Clear current input
-                inputDisplay.value = previousInput + ' ' + operator;
+                operator = value; // Set the operator
+                currentInput = ''; // Clear the current input
+                inputDisplay.value = previousInput + ' ' + operator; // Show first number and operator
+            } else if (resultDisplayed) {
+                // If result was displayed and operator pressed, use result as previous input
+                operator = value;
+                inputDisplay.value = previousInput + ' ' + operator; // Display result and operator
+                resultDisplayed = false;
             }
         }
     });
@@ -51,16 +56,16 @@ equalButton.addEventListener('click', () => {
         resultDisplay.value = result; // Display result
 
         // Reset inputs for next calculation
-        previousInput = result.toString();
-        currentInput = '';
-        operator = '';
-        resultDisplayed = true; // Mark that the result has been displayed
+        previousInput = result.toString(); // Make result the new previous input
+        currentInput = ''; // Clear current input
+        operator = ''; // Clear operator
+        resultDisplayed = true; // Mark result as displayed
     }
 });
 
 // Handle clear button
 clearButton.addEventListener('click', () => {
-    // Clear everything
+    // Clear all values and reset the display
     currentInput = '';
     previousInput = '';
     operator = '';
